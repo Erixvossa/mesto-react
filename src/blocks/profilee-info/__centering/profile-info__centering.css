@@ -1,0 +1,11 @@
+.profilee-info__centering {
+    display: flex;
+    flex-direction: row;
+}
+
+@media screen and (max-width: 882px) {
+    .profilee-info__centering {
+        align-self: center;
+        margin-top: 14px;
+    }
+}
