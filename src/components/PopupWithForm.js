@@ -4,7 +4,7 @@ function PopupWithForm(props) {
 
   return (
     <>
-      <div className={`popup popup__${props.name} popup_type_closed ${props.isOpen && 'popup_type_opened'}`}>
+      <div className={`popup popup__${props.name} popup_type_closed ${props.isOpen && 'popup_type_opened'}`} onClick={props.overlayClick}>
         <form className={`popup__container popup-container__${props.name}`} name="form" method="POST" action="#" noValidate>
         <button className="popup__button-close" type="reset" aria-label="Close" onClick={props.onClose}></button>
           <p className="popup__title">{props.title}</p>

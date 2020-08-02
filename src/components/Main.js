@@ -1,45 +1,38 @@
 import React from 'react';
-import { api } from '../utils/Api.js';
-import Card from './Card';
 
+import Card from './Card';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 function Main(props) {
 
-  const [userInfo, setUserInfo] = React.useState({});
-  const [cards, setCards] = React.useState([]);
-
-  React.useEffect(() => {
-    api.getUserInfo()
-      .then((data) => {
-        setUserInfo(data);
-      });
-    api.getInitialCards()
-      .then((array) => {
-        setCards(array);
-      });
-  }, []);
+  const currentUser = React.useContext(CurrentUserContext); //получаем объект о пользвателе из контекста
 
   return (
     <>
       <nav className="profile">
         <button className="profile__avatar-button" type="button" onClick={props.onEditAvatar}>
-          <img className="profile__avatar" alt="Жак Кусто" src={userInfo.avatar}/>
+          <img className="profile__avatar" alt="Жак Кусто" src={currentUser.avatar}/>
         </button>
         <div className="profilee-info">
           <div className="profilee-info__centering">
-            <h1 className="profilee-info__title">{userInfo.name}</h1>
+            <h1 className="profilee-info__title">{currentUser.name}</h1>
             <button className="profilee-info__edit-button" type="button" onClick={props.onEditProfile}></button>
           </div>
-            <p className="profilee-info__subtitle">{userInfo.about}</p>
+            <p className="profilee-info__subtitle">{currentUser.about}</p>
         </div>
         <button className="profile__add-button" type="button" onClick={props.onAddPlace}></button>
     </nav>
     <section className="elements">
-      {cards.map((item, index) => {
-        return(
-          <Card card={item} key={index} onCardClick={props.onCardClick}/>
-        );
-      })}
+    {props.cards.map((item) => {
+            return (
+              <Card card={item}
+                key={item._id}
+                onCardClick={props.onCardClick}
+                currentUser={currentUser}
+                onCardLike={props.onCardLike}
+                onTrashClick={props.onTrashClick} />
+            );
+          })}
     </section>
     </>
   )

@@ -7,3 +7,7 @@
     font-size: 13px;
     line-height: 16px;
 }
+
+.element__like-counter_hidden {
+    visibility: hidden;
+}
