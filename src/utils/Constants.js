@@ -1,6 +1,8 @@
 
+
+
 //создаем настроечный объект
-export const formPopupRules = {
+export const validationProperties = {
     formSelector: '.popup__container',
     inputSelector: '.popup__input',
     submitButtonSelector: '.popup__submit-button',

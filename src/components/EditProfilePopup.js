@@ -1,84 +1,57 @@
 import React from 'react';
-import PopupWithForm from './PopupWithForm';
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import PopupWithForm from './PopupWithForm.js';
+import {CurrentUserContext} from '../contexts/CurrentUserContext.js';
 
-function EditProfilePopup(props) {
-
-  const currentUser = React.useContext(CurrentUserContext);
-
-  const [name, setName] = React.useState('');
-  const [description, setDescription] = React.useState('');
-
-  React.useEffect(() => {
-    setName(currentUser.name);
-    setDescription(currentUser.about);
-  }, [currentUser]);
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    props.onChangeText();
-    props.onUpdateUser({
-      name: name,
-      about: description
-    });
+class EditProfilePopup extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: '',
+      description: ''
+    }
   }
 
-  function handleChangeAuthor(e) {
-    setName(e.target.value);
+  static contextType = CurrentUserContext;
+
+  componentDidMount() {
+    this.setState({
+      name: this.context.name,
+      description: this.context.about
+    })
   }
 
-  function handleChangeAbout(e) {
-    setDescription(e.target.value);
+  handleNameChange = (evt) => {
+    this.setState({
+      name: evt.target.value
+    })
   }
 
-  function resetInput() {
-    props.onClose();
-    setName(currentUser.name);
-    setDescription(currentUser.about);
+  handleDescriptionChange = (evt) => {
+    this.setState({
+      description: evt.target.value
+    })
   }
 
-  const handleButtonText = (
-    `${props.isText ? 'Сохранение...' : 'Сохранить'}`
-  )
-
-  function overlayClick(e) {
-    props.overlay(e.target);
+  handleSubmit = (evt) => {
+    evt.preventDefault();
+    this.props.onUpdateUser({
+      name: this.state.name,
+      about: this.state.description
+    })
   }
 
-  return (
-    <PopupWithForm
-      overlayClick={overlayClick}
-      onSubmit={handleSubmit}
-      title="Редактировать профиль"
-      name="edit"
-      buttonText={handleButtonText}
-      isOpen={props.isOpen}
-      onClose={resetInput}
-      children={
-        <>
-          <input className="popup__input popup__input_type_name"
-            id="popup-name"
-            name="username"
-            type="text"
-            placeholder="Имя"
-            defaultValue={name}
-            minLength="2" maxLength="40"
-            pattern="[A-Za-zА-ЯЁа-яё -]{1,}" required
-            onChange={handleChangeAuthor} />
-          <span className="popup__error popup__error_invisible" id="popup-name-error">Вы пропустили это поле.</span>
-          <input className="popup__input popup__input_type_subname"
-            id="popup-profession"
-            name="description"
-            type="text"
-            defaultValue={description}
-            placeholder="Профессия"
-            minLength="2" maxLength="200" required
-            onChange={handleChangeAbout} />
-          <span className="popup__error popup__error_invisible" id="popup-profession-error">Вы пропустили это поле.</span>
-        </>
-      }
-    />
-  )
+  render() {
+    return (
+      <PopupWithForm name="edit-info" title="Редактировать профиль" isOpen={this.props.isOpen} onClose={this.props.onClose} onSubmit={this.handleSubmit}>
+        <input className="popup__input popup__input_type_name" id="username-input" type="text" name="username"
+          placeholder="Имя пользователя" required minLength="2" maxLength="40" pattern="[а-яА-Яa-zA-Z -]+" value={this.state.name} onChange={this.handleNameChange} />
+        <span className="popup__error popup__error_invisible" id="username-input-error" />
+        <input className="popup__input popup__input_type_subname" id="description-input" type="text" name="description"
+          placeholder="О себе" required minLength="2" maxLength="200" value={this.state.description} onChange={this.handleDescriptionChange} />
+        <span className="popup__error popup__error_invisible" id="description-input-error" />
+      </PopupWithForm>
+    )
+  }
 }
 
 export default EditProfilePopup;

@@ -1,50 +1,27 @@
 import React from 'react';
-import PopupWithForm from './PopupWithForm';
+import PopupWithForm from './PopupWithForm.js';
 
-function EditAvatarPopup(props) {
-
-  const inputRef = React.useRef();
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    props.onChangeText();
-    props.onUpdateAvatar(e.target, {
-      avatar: inputRef.current.value,
-    });
+class EditAvatarPopup extends React.Component {
+  constructor(props) {
+    super(props);
+    this.imageLinkRef = React.createRef();
   }
 
-  const handleButtonText = (
-    `${props.isText ? 'Сохранение...' : 'Сохранить'}`
-  );
-
-  function overlayClick(e) {
-    props.overlay(e.target);
+  handleSubmit = (evt) => {
+    evt.preventDefault();
+    this.props.onUpdateAvatar(this.imageLinkRef.current.value);
+    this.imageLinkRef.current.value = '';
   }
 
-  return (
-    <PopupWithForm
-      overlayClick={overlayClick}
-      onSubmit={handleSubmit}
-      title="Обновить аватар"
-      defaultValue=""
-      name="avatar"
-      buttonText={handleButtonText}
-      isOpen={props.isOpen}
-      onClose={props.onClose}
-      children={
-        <>
-          <input className="popup__input popup__input_type_url"
-            id="popup-url"
-            ref={inputRef}
-            name="avatar"
-            type="url"
-            placeholder="Ссылка на аватар"
-            required />
-          <span className="popup__error popup__error_invisible" id="popup-url-error">текст ошибки</span>
-        </>
-      }
-    />
-  )
+  render() {
+    return (
+      <PopupWithForm name="change-avatar" title="Обновить аватар" isOpen={this.props.isOpen} onClose={this.props.onClose} onSubmit={this.handleSubmit}>
+        <input className="popup__input popup__input_type_url" id="avatar-link-input" type="url" name="link"
+          placeholder="Ссылка на аватар" required ref={this.imageLinkRef} />
+        <span className="popup__error" id="avatar-link-input-error" />
+      </PopupWithForm>
+    )
+  }
 }
 
 export default EditAvatarPopup;

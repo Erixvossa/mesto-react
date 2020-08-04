@@ -1,66 +1,51 @@
 import React from 'react';
-import PopupWithForm from './PopupWithForm';
+import PopupWithForm from './PopupWithForm.js';
 
-function AddPlacePopup(props) {
+class AddPlacePopup extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: '',
+      link: ''
+    }
+  }
 
-  const inputName = React.useRef();
-  const inputLink = React.useRef();
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    props.onChangeText();
-    props.onAddPlace(e.target, {
-      name: inputName.current.value,
-      link: inputLink.current.value
+  handleNameChange = (evt) => {
+    this.setState({
+      name: evt.target.value
     })
   }
 
-  const handleButtonText = (
-    `${props.isText ? 'Сохранение...' : 'Создать'}`
-  );
-
-  function overlayClick(e) {
-    props.overlay(e.target);
+  handleLinkChange = (evt) => {
+    this.setState({
+      link: evt.target.value
+    })
   }
 
-  return (
-    <PopupWithForm
-      overlayClick={overlayClick}
-      onSubmit={handleSubmit}
-      title="Новое место"
-      name="add"
-      buttonText={handleButtonText}
-      isOpen={props.isOpen}
-      onClose={props.onClose}
-      children={
-        <>
-          <input
-            className="popup__input popup__input_type_name"
-            id="popup-title"
-            defaultValue=""
-            name="name"
-            type="text"
-            placeholder="Название"
-            minLength="1" maxLength="30"
-            ref={inputName}
-            required
-          />
-          <span className="popup__error popup__error_invisible" id="popup-title-error">текст ошибки</span>
-          <input
-            className="popup__input popup__input_type_url"
-            id="popup-url"
-            defaultValue=""
-            name="link"
-            type="url"
-            placeholder="Ссылка на картинку"
-            ref={inputLink}
-            required
-          />
-          <span className="popup__error popup__error_invisible" id="popup-url-error">текст ошибки</span>
-        </>
-      }
-    />
-  )
+  handleSubmit = (evt) => {
+    evt.preventDefault();
+    this.props.onAddPlace({
+      name: this.state.name,
+      link: this.state.link
+    })
+    this.setState({
+      name: '',
+      link: ''
+    })
+  }
+
+  render() {
+    return (
+      <PopupWithForm name="popup__input popup__input_type_name" title="Новое место" isOpen={this.props.isOpen} onClose={this.props.onClose} onSubmit={this.handleSubmit}>
+        <input className="popup__input popup__input_type_name" id="place-input" type="text" name="name"
+          placeholder="Название" required maxLength="30" value={this.state.name} onChange={this.handleNameChange} />
+        <span className="popup__error popup__error_invisible" id="place-input-error"></span>
+        <input className="popup__input popup__input_type_url" id="link-input" type="url" name="link"
+          placeholder="Ссылка на картинку" required value={this.state.link} onChange={this.handleLinkChange} />
+        <span className="popup__error popup__error_invisible" id="link-input-error"></span>
+      </PopupWithForm>
+    )
+  }
 }
 
 export default AddPlacePopup;

@@ -1,66 +1,39 @@
 import React from 'react';
+import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 
-function Card(props) {
-
-  const [error, setError] = React.useState(false); //стейт для проверки правильности ссылки
-
-  function errorLoadImage(e) {
-    e.target.setAttribute('src', 'https://image.freepik.com/free-vector/404_115790-50.jpg'); //усди ссылка неверна, загрузит стандартную картинку
-    setError(true); //поменяет стейт
+class Card extends React.Component {
+  handleClick = () => {
+    this.props.onCardClick(this.props.card);
   }
 
-  function handleDeleteClick(e) {
-    props.onTrashClick(props.card, e.target.parentElement);
+  handleLikeClick = () => {
+    this.props.onCardLike(this.props.card);
   }
 
-  function handleClick(e) {
-    !error && props.onCardClick(props.card); //если нет ошибки в картинке, то можно по ней кликать
+  handleCardDelete = () => {
+    this.props.onCardDelete(this.props.card);
   }
 
-  function handleLikeClick() {
-    props.onCardLike(props.card);
-  }
+  static contextType = CurrentUserContext;
 
-  const isOwn = props.card.owner._id === props.currentUser._id; // Определяем, являемся ли мы владельцем текущей карточки
-  const cardDeleteButtonClassName = ( // Создаём переменную, которую после зададим в `className` для кнопки удаления
-    `element__recycle ${isOwn ? '' : 'element__recycle_hidden'}`
-  );
-
-
-  const isLiked = props.card.likes.some(item => item._id === props.currentUser._id); // Определяем, есть ли у карточки лайк, поставленный текущим пользователем
-  const cardLikeButtonClassName = (// Создаём переменную, которую после зададим в `className` для кнопки лайка
-    `element__like ${isLiked ? 'element__like_set' : ''}`
-  );
-
-  const cardLikeButtonHidden = ( //если есть ошибка то скрываем кнопку сердечко
-    `${error && 'element__button_hidden'}`
-  );
-
-  const errorImageName = ( //если нет ошибки, то показываем текст, иначе пишем свой
-    `${!error ? `${props.card.name}` : 'Упс, ошибка...'}`
-  );
-
-  const errorCountLike = ( //если есть ошибка, то скрываем кол-во лайков
-    `element__like-counter ${error && 'element__like-counter_hidden'}`
-  );
-
-  return (
-    <>
+  render() {
+    const isOwn = this.props.card.owner._id === this.context._id;
+    const isLiked = this.props.card.likes.some(item => item._id === this.context._id);
+    return (
       <div className="element">
-        <img className="element__photo" src={props.card.link} onClick={handleClick} alt=" " onError={errorLoadImage}/>
-        <button className={cardDeleteButtonClassName} type="button" onClick={handleDeleteClick}></button>
+        <img className="element__photo" onClick={this.handleClick} alt={this.props.card.name} src={this.props.card.link}/>
         <div className="element__title-like-string">
-          <h2 className="element__title">{errorImageName}</h2>
+          <h2 className="element__title">{this.props.card.name}</h2>
           <div className="element__like-container">
-            <button className={`${cardLikeButtonClassName} ${cardLikeButtonHidden}`} type="button" onClick={handleLikeClick}></button>
-            <p className={errorCountLike}>{props.card.likes.length > 0 ? `${props.card.likes.length}` : 0}</p>
+            <button className={isLiked ? "element__like element__like_set" : "element__like"}
+              type="button" aria-label="Поставить лайк." onClick={this.handleLikeClick} />
+            <p className="element__like-counter">{this.props.card.likes.length}</p>
           </div>
         </div>
+        {isOwn && <button className="element__recycle" type="button" aria-label="Удалить фото." onClick={this.handleCardDelete}/>}
       </div>
-    </>
-  )
+    )
+  }
 }
 
 export default Card;
-
-

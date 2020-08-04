@@ -1,23 +1,18 @@
 import React from 'react';
 
-function ImagePopup(props) {
-
-  function overlayClick(e) {
-    props.overlay(e.target);
-  }
-
-
-  return (
-    <>
-    <div className={`popup popup_type_closed popup-img ${props.isOpen && 'popup_type_opened'}`} id="popup-img" onClick={overlayClick}>
+class ImagePopup extends React.Component {
+  
+  render() {
+    return (
+      <div className={this.props.card ? "popup popup-img" : "popup popup_type_closed popup-img"}>
         <div className="popup-img__container">
-            <button className="popup-img__button-close popup__button-close" type="reset" aria-label="Close" onClick={props.onClose}></button>
-            <img className="popup-img__image" src={props.card.link} alt="укрупненное изображение"/>
-            <p className="popup-img__title">{props.card.name}</p>
+          <button className="popup-img__button-close popup__button-close" type="button" onClick={this.props.onClose} aria-label="Закрыть окно."></button>
+          <img className="popup-img__image" alt={this.props.name} src={this.props.card}/>
+          <p className="popup-img__title">{this.props.name}</p>
         </div>
-    </div>
-    </>
-  )
+      </div>
+    )
+  }
 }
 
 export default ImagePopup;
